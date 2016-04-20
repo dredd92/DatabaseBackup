@@ -1,0 +1,39 @@
+﻿<Page x:Class="DatabaseBackup.Presentation.Page1"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DatabaseBackup.Presentation"
+      mc:Ignorable="d" 
+      d:DesignHeight="350" d:DesignWidth="525"
+      Title="Page1">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="button"
+                Content="Backup"
+                
+                Grid.Column="1"
+                Grid.Row="1" 
+                Width="120"
+                Height="60" FontSize="29.333" Click="BackupButtonClick"
+                />
+        <Button x:Name="restoreButton"
+                Content="Restore"
+                Grid.Column="1"              
+                Grid.Row="2"
+                Width="120"
+                Height="60" FontSize="29.333" Click="RestoreButtonClick"/>
+
+    </Grid>
+</Page>

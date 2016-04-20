@@ -1,0 +1,72 @@
+﻿<Page x:Class="DatabaseBackup.Presentation.Page2"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DatabaseBackup.Presentation"
+      mc:Ignorable="d" 
+      d:DesignHeight="350" d:DesignWidth="525"
+      Title="Page2">
+
+    <Grid>
+        <StackPanel 
+            HorizontalAlignment="Center"
+            Height="320"           
+            VerticalAlignment="Top"
+            Width="450">
+
+            <TextBox x:Name="InputServerData"
+                     Height="30"
+                     Margin="0,10,0,0"
+                     TextWrapping="Wrap"
+                     Text="Type the path to server..." 
+                     GotFocus="RemoveText" 
+                     LostFocus="AddDescriptionToServerInput" FontSize="20"/>
+
+            <StackPanel Height="40" Orientation="Horizontal" Margin="0,7,0,0">
+                <Label x:Name="authentication"
+                       Content="Authentication: "
+                       Width="150" FontSize="20"/>
+                <ComboBox x:Name="selectAutentification" Width="215" IsReadOnly="True" Height="30" FontSize="16" SelectionChanged="Combobox_Selected">
+                    <TextBlock>Windows Authentication</TextBlock>
+                    <TextBlock>SQL Server Security</TextBlock>
+                </ComboBox>
+            </StackPanel>
+            
+            <StackPanel Height="40" Orientation="Horizontal">
+                <Label x:Name="usernameLabel"
+                       Content="Username: "
+                       Height="40"
+                       Width="120" FontSize="20"/>
+                <TextBox x:Name="usernameTextBox" Width="170"  Height="25">                    
+                </TextBox>                 
+            </StackPanel>
+            
+            <StackPanel Height="40" Orientation="Horizontal">
+                <Label x:Name="passwordLabel"
+                       Content="Password: "
+                       Width="100" FontSize="20"/>
+                <TextBox x:Name="passwordTextBox" Width="170"  Height="25" Margin="15,0,0,0">
+                </TextBox>
+            </StackPanel>
+
+            <StackPanel Height="40" Orientation="Horizontal">
+                <Label x:Name="chooseDatabaseLabel"
+                       Content="Choose the Database: "
+                       Width="200"
+                       Margin ="0,0,15,0"
+                       FontSize="20"/>
+                <ComboBox x:Name="choosingDatabase"
+                          Width="170"                          
+                          Height="25"
+                          SelectionChanged="Combobox_Selected">                    
+                </ComboBox>
+            </StackPanel>
+
+            <Button x:Name="backupButton" Content="Backup" FontSize="30.667" Margin="0,10,0,0" Click="BackupButtonClick"/>
+
+        </StackPanel>
+    </Grid>
+</Page>
+
+
