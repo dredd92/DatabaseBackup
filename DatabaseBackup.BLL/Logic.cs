@@ -3,6 +3,7 @@ using DatabaseBackup.ContractsDAL;
 using DatabaseBackup.DAL;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 
 namespace DatabaseBackup.BLL
@@ -13,21 +14,20 @@ namespace DatabaseBackup.BLL
 
         // Use when auth is sql security
 
-        public void Backup(string address, string databaseName, string username, string password)
+        public void Backup(string pathToFile, string address, string databaseName, string username, string password)
         {
-            Path.Combine(Path.GetTempPath(), "DatabaseBackup");
-            this.dal.Backup($"Server={address};Database={databaseName};User Id={username};Password={password}");
+            this.dal.Backup($@"Data Source={address};Database={databaseName};User Id={username};Password={password}", pathToFile);
         }
 
         // Use when auth is Windows auth
-        public void BackupLocalInstance(string address, string databaseName)
+        public void BackupLocalInstance(string pathToFile, string address, string databaseName)
         {
-            this.dal.Backup($@"Data Source={address};Initial Catalog=""{databaseName}"";Integrated Security=True");
+            this.dal.Backup($@"Data Source={address};Initial Catalog=""{databaseName}"";Integrated Security=True", pathToFile);
         }
 
-        public void Restore(System.DateTime date)
+        public void Restore(string pathToFile)
         {
-            this.dal.Restore(date, @"Data Source=(localdb)\mssqllocaldb;Integrated Security=True");
+            this.dal.Restore(pathToFile, @"Data Source=(localdb)\mssqllocaldb;Integrated Security=True");
         }
 
         // Use when auth is Sql security

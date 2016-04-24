@@ -10,6 +10,6 @@ namespace DatabaseBackup.Presentation
 {
     public static class LogicKeeper
     {
-        public static ILogic logic = new Logic();
+        public static ILogic Logic = new Logic();
     }
 }

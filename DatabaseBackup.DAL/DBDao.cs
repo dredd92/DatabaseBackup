@@ -14,7 +14,9 @@ namespace DatabaseBackup.DAL
 {
     public class DBDao : IDao
     {
-        public void Backup(string conString)
+        private string rootDir = Path.Combine(Path.GetTempPath(), "DatabaseBackups");
+
+        public void Backup(string conString, string pathToFile)
         {
             DBDatabase database;
             string databaseName = Regex.Match(conString, @"\b(Database|Initial Catalog)=""(.+?)"";").Groups[2].Value;
@@ -23,6 +25,13 @@ namespace DatabaseBackup.DAL
                 connection.Open();
 
                 database = this.GetDatabase(connection, databaseName);
+
+                var constraints = new List<DBConstraint>(this.GetPrimaryKeyConstraints(connection));
+                constraints.AddRange(this.GetForeignKeyConstraints(connection));
+                constraints.AddRange(this.GetUniqueConstraints(connection));
+                constraints.AddRange(this.GetCheckedConstraints(connection));
+
+                database.Constraints = constraints;
 
                 database.Schemas = this.GetSchemas(connection);
 
@@ -39,12 +48,11 @@ namespace DatabaseBackup.DAL
                 database.Sequences = this.GetSequences(connection);
             }
 
-            this.CreateBackupFile(database);
+            this.CreateBackupFile(database, pathToFile);
         }
 
-        public void Restore(DateTime date, string conString)
+        public void Restore(string pathToFile, string conString)
         {
-            string pathToFile = @"C:\Users\John\Documents\Projects\C#\AdoNet341\CSIT341\Task4. Система бэкапа базы данных\DatabaseBackup\DatabaseBackup.ConsoleApp\bin\Debug\backup_ 16-04-2016_17-41.sql";
             var script = File.ReadAllLines(pathToFile);
             var comString = new StringBuilder();
             using (var connection = new SqlConnection(conString))
@@ -103,10 +111,14 @@ namespace DatabaseBackup.DAL
             }
         }
 
-        private void CreateBackupFile(DBDatabase database)
+        private void CreateBackupFile(DBDatabase database, string pathToFile)
         {
             var curDate = DateTime.Now;
-            using (var sqlFile = new StreamWriter($"backup_{curDate: dd-MM-yyyy_HH-mm}.sql"))
+            if (!Directory.Exists(this.rootDir))
+            {
+                Directory.CreateDirectory(this.rootDir);
+            }
+            using (var sqlFile = new StreamWriter(pathToFile))
             {
                 sqlFile.WriteLine(database.GetCreationQuery());
                 sqlFile.WriteLine();
@@ -138,7 +150,7 @@ namespace DatabaseBackup.DAL
                 this.WriteTableData(database.Tables, sqlFile);
                 sqlFile.WriteLine();
 
-                this.WriteConstraints(database.Tables, sqlFile);
+                this.WriteConstraints(database.Constraints, sqlFile);
                 sqlFile.WriteLine();
 
                 this.WriteTriggers(database.Tables, sqlFile);
@@ -148,16 +160,14 @@ namespace DatabaseBackup.DAL
 
         #region getters
 
-        private IEnumerable<DBCheckConstraint> GetCheckedConstraints(SqlConnection connection, DBTable table)
+        private IEnumerable<DBCheckConstraint> GetCheckedConstraints(SqlConnection connection)
         {
             var checkedConstraints = new List<DBCheckConstraint>();
             string sqlCommandStr = @"select tab.TABLE_SCHEMA, tab.TABLE_NAME, scc.name, scc.definition from sys.check_constraints as scc inner join (select st.object_id, ist.TABLE_NAME, ist.TABLE_SCHEMA from INFORMATION_SCHEMA.TABLES as ist inner join sys.tables as st on ist.TABLE_NAME = st.name WHERE ist.TABLE_TYPE = 'BASE TABLE') as tab
-on scc.parent_object_id = tab.object_id WHERE tab.TABLE_NAME = @tableName AND tab.TABLE_SCHEMA = @tableSchema";
+on scc.parent_object_id = tab.object_id";
 
             using (SqlCommand command = new SqlCommand(sqlCommandStr, connection))
             {
-                command.Parameters.AddWithValue("@tableName", table.Name);
-                command.Parameters.AddWithValue("@tableSchema", table.Schema);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -406,7 +416,7 @@ on scc.parent_object_id = tab.object_id WHERE tab.TABLE_NAME = @tableName AND ta
             return null;
         }
 
-        private IEnumerable<DBForeignKeyConstraint> GetForeignKeyConstraints(SqlConnection connection, DBTable table)
+        private IEnumerable<DBForeignKeyConstraint> GetForeignKeyConstraints(SqlConnection connection)
         {
             var foreignKeyConstraints = new List<DBForeignKeyConstraint>();
             string sqlCommandStr = @"SELECT
@@ -438,13 +448,10 @@ on scc.parent_object_id = tab.object_id WHERE tab.TABLE_NAME = @tableName AND ta
                                                 WHERE
                                                     i1.CONSTRAINT_TYPE = 'PRIMARY KEY'
                                                 ) PT
-                                        ON PT.TABLE_NAME = PK.TABLE_NAME
-WHERE FK.TABLE_SCHEMA = @tableSchema AND FK.TABLE_NAME = @tableName";
+                                        ON PT.TABLE_NAME = PK.TABLE_NAME";
 
             using (SqlCommand command = new SqlCommand(sqlCommandStr, connection))
             {
-                command.Parameters.AddWithValue("@tableName", table.Name);
-                command.Parameters.AddWithValue("@tableSchema", table.Schema);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -508,19 +515,17 @@ WHERE FK.TABLE_SCHEMA = @tableSchema AND FK.TABLE_NAME = @tableName";
             return functions;
         }
 
-        private IEnumerable<DBPrimaryKeyConstraint> GetPrimaryKeyConstraints(SqlConnection connection, DBTable table)
+        private IEnumerable<DBPrimaryKeyConstraint> GetPrimaryKeyConstraints(SqlConnection connection)
         {
             var primaryKeyConstraints = new List<DBPrimaryKeyConstraint>();
             string sqlCommandStr = @"SELECT  tc.CONSTRAINT_NAME, tc.TABLE_SCHEMA, tc.TABLE_NAME, cu.COLUMN_NAME
 	                                                                        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc
 		                                                                        INNER JOIN(SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE) AS cu
 		                                                                        ON tc.CONSTRAINT_NAME = cu.CONSTRAINT_NAME
-                                                                        WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' AND tc.TABLE_NAME = @tableName AND tc.TABLE_SCHEMA = @tableSchema";
+                                                                        WHERE CONSTRAINT_TYPE = 'PRIMARY KEY'";
 
             using (SqlCommand command = new SqlCommand(sqlCommandStr, connection))
             {
-                command.Parameters.AddWithValue("@tableName", table.Name);
-                command.Parameters.AddWithValue("@tableSchema", table.Schema);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -687,15 +692,9 @@ ON ss.name = infS.SEQUENCE_NAME";
             }
             foreach (var table in tables)
             {
-                var constraints = new List<DBConstraint>(this.GetForeignKeyConstraints(connection, table));
-                constraints.AddRange(this.GetPrimaryKeyConstraints(connection, table));
-                constraints.AddRange(this.GetUniqueConstraints(connection, table));
-                constraints.AddRange(this.GetCheckedConstraints(connection, table));
-
                 table.Columns = this.GetColumns(connection, table);
                 table.Data = this.GetData(connection, table);
                 table.Triggers = this.GetTableTriggers(connection, table);
-                table.Constraints = constraints;
             }
 
             return tables;
@@ -755,19 +754,17 @@ ON ss.name = infS.SEQUENCE_NAME";
             return triggers;
         }
 
-        private IEnumerable<DBUniqueConstraint> GetUniqueConstraints(SqlConnection connection, DBTable table)
+        private IEnumerable<DBUniqueConstraint> GetUniqueConstraints(SqlConnection connection)
         {
             var uniqueConstraints = new List<DBUniqueConstraint>();
             string sqlCommandStr = @"SELECT tc.CONSTRAINT_SCHEMA, tc.CONSTRAINT_NAME,  tc.TABLE_SCHEMA, tc.TABLE_NAME, cu.COLUMN_NAME
 	        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc
 	        INNER JOIN(SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE) AS cu
 	        ON tc.CONSTRAINT_NAME = cu.CONSTRAINT_NAME
-	        WHERE tc.CONSTRAINT_TYPE = 'UNIQUE' AND tc.TABLE_NAME = @tableName AND tc.TABLE_SCHEMA = @tableSchema";
+	        WHERE tc.CONSTRAINT_TYPE = 'UNIQUE'";
 
             using (SqlCommand command = new SqlCommand(sqlCommandStr, connection))
             {
-                command.Parameters.AddWithValue("@tableName", table.Name);
-                command.Parameters.AddWithValue("@tableSchema", table.Schema);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -879,15 +876,12 @@ ON ss.name = infS.SEQUENCE_NAME";
 
         #region WriteMethods
 
-        private void WriteConstraints(IEnumerable<DBTable> tables, StreamWriter sqlFile)
+        private void WriteConstraints(IEnumerable<DBConstraint> constraints, StreamWriter sqlFile)
         {
-            foreach (var table in tables)
+            foreach (var constraint in constraints)
             {
-                foreach (var constraint in table.Constraints)
-                {
-                    sqlFile.WriteLine(constraint.GetCreationQuery());
-                    sqlFile.WriteLine("GO");
-                }
+                sqlFile.WriteLine(constraint.GetCreationQuery());
+                sqlFile.WriteLine("GO");
             }
         }
 
@@ -908,7 +902,7 @@ ON ss.name = infS.SEQUENCE_NAME";
             foreach (var procedure in procedures)
             {
                 sqlFile.WriteLine(procedure.GetCreationQuery());
-                sqlFile.WriteLine("GO;");
+                sqlFile.WriteLine("GO");
             }
         }
 
@@ -961,7 +955,7 @@ ON ss.name = infS.SEQUENCE_NAME";
             foreach (var table in tables)
             {
                 sqlFile.WriteLine(table.GetCreationQuery());
-                sqlFile.WriteLine("GO;");
+                sqlFile.WriteLine("GO");
             }
         }
 

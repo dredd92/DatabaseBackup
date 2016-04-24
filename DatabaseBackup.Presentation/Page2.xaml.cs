@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +20,20 @@ namespace DatabaseBackup.Presentation
     /// <summary>
     /// Логика взаимодействия для Page2.xaml
     /// </summary>
+    ///
+    internal enum AuthenticationMode
+    {
+        WindowsAuthentication,
+        SqlAuthentication,
+    }
+
     public partial class Page2 : Page
     {
+        private string address;
+        private AuthenticationMode authMode;
+        private string password;
+        private string username;
+
         public Page2()
         {
             InitializeComponent();
@@ -28,24 +42,83 @@ namespace DatabaseBackup.Presentation
             //combobox.Items.Add();
         }
 
-        private string connectionString = "";
-        private string username = "";
-        private string password = "";
-
-        private void RemoveText(object sender, RoutedEventArgs e)
-        {
-            if(InputServerData.Text == "Type the path to server...")
-            {
-                InputServerData.Text = "";
-            }            
-        }
-
         private void AddDescriptionToServerInput(object sender, RoutedEventArgs e)
         {
-            if(InputServerData.Text == "")
+            if (InputServerData.Text == "")
             {
                 InputServerData.Text = "Type the path to server...";
-            }            
+            }
+        }
+
+        private void BackupButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (this.choosingDatabase.SelectedItem == null)
+            {
+                MessageBox.Show("Error: select a database to backup", string.Empty, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var database = this.choosingDatabase.SelectedItem.ToString();
+
+            var dialog = new SaveFileDialog();
+            dialog.FileName = "script";
+            dialog.DefaultExt = ".sql";
+            dialog.Filter = "SQL Files (.sql)|*.sql";
+            var dialogResult = dialog.ShowDialog() ?? false;
+
+            if (!dialogResult)
+            {
+                return;
+            }
+
+            switch (this.authMode)
+            {
+                case AuthenticationMode.WindowsAuthentication:
+                    LogicKeeper.Logic.BackupLocalInstance(dialog.FileName, this.address, database);
+                    MessageBox.Show("Backup completed.");
+                    break;
+
+                case AuthenticationMode.SqlAuthentication:
+                    LogicKeeper.Logic.Backup(dialog.FileName, this.address, database, this.username, this.password);
+                    MessageBox.Show("Backup completed.");
+                    break;
+
+                default:
+                    MessageBox.Show("Error");
+                    break;
+            }
+        }
+
+        private void ChoosingDatabase_DropDownOpened(object sender, EventArgs e)
+        {
+            this.address = this.InputServerData.Text;
+
+            if (this.selectAutentification.SelectedItem == this.selectAutentification.Items[0])
+            {
+                try
+                {
+                    this.authMode = AuthenticationMode.WindowsAuthentication;
+                    this.choosingDatabase.ItemsSource = LogicKeeper.Logic.ShowDatabasesLocalInstance(this.address);
+                }
+                catch (SqlException)
+                {
+                    MessageBox.Show("Error");
+                }
+            }
+            else
+            {
+                try
+                {
+                    this.authMode = AuthenticationMode.SqlAuthentication;
+                    this.username = this.usernameTextBox.Text;
+                    this.password = this.passwordTextBox.Text;
+                    this.choosingDatabase.ItemsSource = LogicKeeper.Logic.ShowDatabases(this.address, this.username, this.password);
+                }
+                catch (SqlException)
+                {
+                    MessageBox.Show("Error:");
+                }
+            }
         }
 
         private void Combobox_Selected(object sender, SelectionChangedEventArgs e)
@@ -70,13 +143,15 @@ namespace DatabaseBackup.Presentation
                 usernameTextBox.Text = "";
                 passwordTextBox.Text = "";
             }
-            
         }
 
-        private void BackupButtonClick(object sender, RoutedEventArgs e)
+        private void RemoveText(object sender, RoutedEventArgs e)
         {
-
-        }        
+            if (InputServerData.Text == "Type the path to server...")
+            {
+                InputServerData.Text = "";
+            }
+        }
     }
 }
 

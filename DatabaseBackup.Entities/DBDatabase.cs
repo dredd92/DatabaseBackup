@@ -10,6 +10,7 @@ namespace DatabaseBackup.Entities
     {
         public string CollationName { get; set; }
         public byte CompatibilityLevel { get; set; }
+        public IEnumerable<DBConstraint> Constraints { get; set; }
         public IEnumerable<DBFunction> Functions { get; set; }
         public bool IsAnsiNullDefaultOn { get; set; }
         public bool IsAnsiNullsOn { get; set; }

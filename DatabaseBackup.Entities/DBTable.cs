@@ -7,7 +7,6 @@ namespace DatabaseBackup.Entities
     public class DBTable
     {
         public System.Collections.Generic.IEnumerable<DBColumn> Columns { get; set; }
-        public IEnumerable<DBConstraint> Constraints { get; set; }
         public IEnumerable<DBData> Data { get; set; }
         public string Name { get; set; }
         public string Schema { get; set; }
@@ -20,10 +19,10 @@ namespace DatabaseBackup.Entities
 
             foreach (var column in this.Columns)
             {
-                result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
+                result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
             }
 
-            result.AppendLine(");");
+            result.AppendLine(")");
             return result.ToString();
         }
     }
