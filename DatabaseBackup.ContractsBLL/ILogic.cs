@@ -6,7 +6,9 @@
 
         void BackupLocalInstance(string pathToFile, string address, string databaseName);
 
-        void Restore(string pathToFile);
+        void Restore(string pathToFile, string address, string username, string password);
+
+        void RestoreLocalInstance(string pathToFile, string address);
 
         System.Collections.Generic.IEnumerable<string> ShowDatabases(string address, string username, string password);
 

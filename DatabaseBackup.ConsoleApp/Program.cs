@@ -11,7 +11,6 @@ namespace DatabaseBackup.ConsoleApp
         {
             ILogic logic = new Logic();
             //logic.BackupLocalInstance(@"(localdb)\mssqllocaldb", "AdventureWorks2012");
-            logic.Restore(DateTime.Now);
         }
     }
 }

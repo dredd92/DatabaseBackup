@@ -51,7 +51,7 @@ namespace DatabaseBackup.Presentation
                 MessageBox.Show("Selected file has wrong type. Please, select another file");
             }
 
-            LogicKeeper.Logic.Restore(this.selectDBTextBox.Text);
+            LogicKeeper.Logic.RestoreLocalInstance(this.selectDBTextBox.Text, this.serverAddressTextBox.Text);
             MessageBox.Show("Restoration completed");
         }
     }
