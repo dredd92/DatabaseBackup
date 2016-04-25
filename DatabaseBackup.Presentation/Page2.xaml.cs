@@ -37,9 +37,7 @@ namespace DatabaseBackup.Presentation
         public Page2()
         {
             InitializeComponent();
-            selectAutentification.SelectedItem = selectAutentification.Items[0];
-
-            //combobox.Items.Add();
+            selectAutentification.SelectedItem = selectAutentification.Items[0];            
         }
 
         private void AddDescriptionToServerInput(object sender, RoutedEventArgs e)
@@ -155,6 +153,3 @@ namespace DatabaseBackup.Presentation
     }
 }
 
-/*string errorText = "abvacas";
-Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "DatabaseBackup"));
-            File.WriteAllText($"log_{DateTime.Now.ToString("DD-MM-yyyy_HH-mm-ss")}", errorText);*/

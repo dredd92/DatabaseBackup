@@ -23,9 +23,15 @@ namespace DatabaseBackup.Presentation
     /// </summary>
     public partial class Page3 : Page
     {
+        private string address;
+        private AuthenticationMode authMode;
+        private string password;
+        private string username;
+
         public Page3()
         {
             InitializeComponent();
+            selectAutentification.SelectedItem = selectAutentification.Items[0];
         }
 
         private void BrowseButtonClick(object sender, RoutedEventArgs e)
@@ -49,10 +55,70 @@ namespace DatabaseBackup.Presentation
             else if (!Regex.IsMatch(this.selectDBTextBox.Text, @".*\.sql"))
             {
                 MessageBox.Show("Selected file has wrong type. Please, select another file");
+            }            
+
+            switch (this.authMode)
+            {
+                case AuthenticationMode.WindowsAuthentication:
+                    LogicKeeper.Logic.RestoreLocalInstance(this.selectDBTextBox.Text, this.serverAddressTextBox.Text);
+                    MessageBox.Show("Backup completed.");
+                    break;
+
+                case AuthenticationMode.SqlAuthentication:
+                    this.address = this.serverAddressTextBox.Text;
+                    this.username = this.usernameTextBox.Text;
+                    this.password = this.passwordTextBox.Text;
+                    //LogicKeeper.Logic.Backup(dialog.FileName, this.address, database, this.username, this.password);
+                    MessageBox.Show("Backup completed.");
+                    break;
+
+                default:
+                    MessageBox.Show("Error");
+                    break;
             }
 
             LogicKeeper.Logic.RestoreLocalInstance(this.selectDBTextBox.Text, this.serverAddressTextBox.Text);
             MessageBox.Show("Restoration completed");
+        }
+
+        private void AddDescriptionToServerInput(object sender, RoutedEventArgs e)
+        {
+            if (serverAddressTextBox.Text == "")
+            {
+                serverAddressTextBox.Text = "Type the path to server...";
+            }
+        }
+
+        private void Combobox_Selected(object sender, SelectionChangedEventArgs e)
+        {
+            if (selectAutentification.SelectedItem == selectAutentification.Items[0])
+            {
+                usernameTextBox.IsEnabled = false;
+                passwordTextBox.IsEnabled = false;
+                usernameLabel.IsEnabled = false;
+                passwordLabel.IsEnabled = false;
+
+                usernameTextBox.Text = "(not required)";
+                passwordTextBox.Text = "(not required)";
+            }
+            else
+            {
+                usernameTextBox.IsEnabled = true;
+                passwordTextBox.IsEnabled = true;
+                usernameLabel.IsEnabled = true;
+                passwordLabel.IsEnabled = true;
+
+                usernameTextBox.Text = "";
+                passwordTextBox.Text = "";
+            }
+        }
+
+        private void RemoveText(object sender, RoutedEventArgs e)
+        {
+            if (serverAddressTextBox.Text == "Type the path to server...")
+            {
+                serverAddressTextBox.Text = "";
+            }
         }
     }
 }

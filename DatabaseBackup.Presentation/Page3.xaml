@@ -9,35 +9,90 @@
       Title="Page3">
 
     <Grid>
-        <StackPanel
-            HorizontalAlignment="Center"
-            Height="320"
-            VerticalAlignment="Top"
-            Width="450">
+        <StackPanel x:Name="rootStackPanel"
+                    Orientation="Vertical"
+                    Width="450">
 
-            <StackPanel Height="40" Orientation="Horizontal" Margin="0,90,-32,0">
-                <Label x:Name="serverAddressLabel"
-            		Content="Address: "
-            		Margin="0,0,0,0"
-            		Width="106" FontSize="20" />
-                <TextBox x:Name="serverAddressTextBox"
-            		Width="319"
-            		Margin="0,5,0,5"
-            		Height="30" />
+            <TextBox x:Name="serverAddressTextBox"
+                     Width="450"
+                     Height="30"
+                     Margin="0,10,0,0"
+                     TextWrapping="Wrap"
+                     Text="Type the path to server..."
+                     GotFocus="RemoveText"
+                     LostFocus="AddDescriptionToServerInput"
+                     FontSize="20" />
+
+            <StackPanel Height="40" Orientation="Horizontal" Margin="0,7,0,0">
+                <Label x:Name="authentication"
+                       Content="Authentication: "
+                       Margin="0,0,0,0"
+                       Width="150" FontSize="20" />
+                <ComboBox x:Name="selectAutentification" Width="215" IsReadOnly="True" Height="30" FontSize="16" SelectionChanged="Combobox_Selected">
+                    <TextBlock>Windows Authentication</TextBlock>
+                    <TextBlock>SQL Server Security</TextBlock>
+                </ComboBox>
             </StackPanel>
-            <StackPanel Height="40" Orientation="Horizontal" Margin="0,20,-32,0">
+
+            <StackPanel Height="40"
+                        Orientation="Horizontal">
+                <Label x:Name="usernameLabel"
+                       Margin="0,0,0,0"
+                       Content="Username: "
+                       Height="40"
+                       Width="120"
+                       FontSize="20" />
+                <TextBox x:Name="usernameTextBox"                         
+                         Width="170"
+                         Height="25">
+                </TextBox>
+            </StackPanel>
+
+            <StackPanel Height="40"
+                        Orientation="Horizontal">
+                <Label x:Name="passwordLabel"
+                       Content="Password: "
+                       Margin="0,0,0,0"
+                       Width="100" FontSize="20" />
+                <TextBox x:Name="passwordTextBox"
+                         Width="170"
+                         Height="25"
+                         Margin="20,0,0,0">
+                </TextBox>
+            </StackPanel>
+
+            <StackPanel
+            HorizontalAlignment="Center"
+            Height="150"
+            VerticalAlignment="Top"
+            Width="450">          
+            <StackPanel Height="40"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,0">                
                 <Label x:Name="selectDBLabel"
             		Content="File: "
             		Margin="0,0,0,0"
-            		Width="106" FontSize="20" />
+            		Width="50"
+                    FontSize="20" />                
                 <TextBox x:Name="selectDBTextBox"
             		Width="319"
             		Margin="0,5,0,5"
-            		Height="30" />
-                <Button x:Name="browserButton" Width="30" Content="..." Margin="20,5,0,5" Click="BrowseButtonClick" />
+            		Height="30"
+                    FontSize="20"/>                
+                <Button x:Name="browserButton"
+                        Width="30"
+                        Content="..."
+                        Margin="20,5,0,5"
+                        Click="BrowseButtonClick" />
             </StackPanel>
 
-            <Button x:Name="restoreButton" Content="Restore" FontSize="30.667" Margin="0,30,0,0" Click="RestoreButtonClick" />
+            <Button x:Name="restoreButton"
+                    Content="Restore"
+                    FontSize="30.667"
+                    Margin="0,10,0,0"
+                    Click="RestoreButtonClick" />
+        </StackPanel>
+            
         </StackPanel>
     </Grid>
 </Page>
