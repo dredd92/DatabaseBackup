@@ -1,10 +1,7 @@
-﻿using DatabaseBackup.ContractsBLL;
+﻿using System.Collections.Generic;
+using DatabaseBackup.ContractsBLL;
 using DatabaseBackup.ContractsDAL;
 using DatabaseBackup.DAL;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.IO;
 
 namespace DatabaseBackup.BLL
 {

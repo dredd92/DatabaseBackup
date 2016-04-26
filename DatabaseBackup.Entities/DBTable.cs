@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 namespace DatabaseBackup.Entities
@@ -7,9 +6,13 @@ namespace DatabaseBackup.Entities
     public class DBTable
     {
         public System.Collections.Generic.IEnumerable<DBColumn> Columns { get; set; }
+
         public IEnumerable<DBData> Data { get; set; }
+
         public string Name { get; set; }
+
         public string Schema { get; set; }
+
         public IEnumerable<DBTrigger> Triggers { get; set; }
 
         public string GetCreationQuery()
@@ -37,7 +40,6 @@ namespace DatabaseBackup.Entities
                     default:
                         result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
                         break;
-
                 }
 
                 //result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");

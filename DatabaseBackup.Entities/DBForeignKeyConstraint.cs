@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace DatabaseBackup.Entities
 {
     public class DBForeignKeyConstraint : DBConstraint
     {
         public string OnDeleteRule { get; set; }
+
         public string OnUpdateRule { get; set; }
+
         public List<string> PrimaryTableColumns { get; set; }
+
         public string PrimaryTableName { get; set; }
+
         public string PrimaryTableSchema { get; set; }
 
         public override string GetCreationQuery()

@@ -5,12 +5,19 @@ namespace DatabaseBackup.Entities
     public class DBSequence
     {
         public string DataType { get; set; }
+
         public long Increment { get; set; }
+
         public bool IsCached { get; set; }
+
         public long MaxValue { get; set; }
+
         public long MinValue { get; set; }
+
         public string Name { get; set; }
+
         public string Schema { get; set; }
+
         public long StartValue { get; set; }
 
         public string GetCreationQuery()

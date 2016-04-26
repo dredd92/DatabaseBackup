@@ -1,8 +1,8 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 
 namespace DatabaseBackup.Presentation
 {
@@ -26,7 +26,7 @@ namespace DatabaseBackup.Presentation
         public Page2()
         {
             InitializeComponent();
-            selectAutentification.SelectedItem = selectAutentification.Items[0];            
+            selectAutentification.SelectedItem = selectAutentification.Items[0];
         }
 
         private void AddDescriptionToServerInput(object sender, RoutedEventArgs e)
@@ -61,7 +61,6 @@ namespace DatabaseBackup.Presentation
             {
                 switch (this.authMode)
                 {
-
                     case AuthenticationMode.WindowsAuthentication:
                         LogicKeeper.Logic.BackupLocalInstance(dialog.FileName, this.address, database);
                         MessageBox.Show("Backup completed.");
@@ -107,7 +106,7 @@ namespace DatabaseBackup.Presentation
                     this.username = this.usernameTextBox.Text;
                     this.password = this.passwordTextBox.Text;
                     this.choosingDatabase.ItemsSource = LogicKeeper.Logic.ShowDatabases(this.address, this.username, this.password);
-                } 
+                }
                 catch (SqlException ex)
                 {
                     MessageBox.Show($"An error occured during database backup.{Environment.NewLine}{ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -148,4 +147,3 @@ namespace DatabaseBackup.Presentation
         }
     }
 }
-

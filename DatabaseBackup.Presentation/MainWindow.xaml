@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DatabaseBackup.Presentation"
         mc:Ignorable="d"
-        Title="Database Backup" Height="350" Width="525">
+        Title="Database Backup" Height="350" Width="525"
+        ResizeMode="NoResize">
     <Grid>
-        <Frame x:Name="frame" Content="Frame" HorizontalAlignment="Left" Height="320" VerticalAlignment="Top" Width="515" Margin="0,0,-8,-1"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="125*" />
+            <ColumnDefinition Width="393*" />
+        </Grid.ColumnDefinitions>
+        <Frame x:Name="frame" Content="Frame" HorizontalAlignment="Left" Height="320" VerticalAlignment="Top" Width="515" Grid.ColumnSpan="2" />
     </Grid>
 </Window>

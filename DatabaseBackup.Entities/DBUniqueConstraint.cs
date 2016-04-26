@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace DatabaseBackup.Entities
+﻿namespace DatabaseBackup.Entities
 {
     public class DBUniqueConstraint : DBConstraint
     {
