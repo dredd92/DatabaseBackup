@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DatabaseBackup.Presentation"
         mc:Ignorable="d"
         Title="Database Backup" Height="350" Width="525"
-        ResizeMode="NoResize">
+        ResizeMode="CanMinimize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="125*" />

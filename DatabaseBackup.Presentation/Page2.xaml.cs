@@ -57,6 +57,7 @@ namespace DatabaseBackup.Presentation
             {
                 return;
             }
+
             try
             {
                 switch (this.authMode)

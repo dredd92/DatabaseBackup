@@ -102,7 +102,7 @@ namespace DatabaseBackup.DAL
             {
                 sqlFile.WriteLine(database.GetCreationQuery());
                 sqlFile.WriteLine();
-                sqlFile.WriteLine($"USE {database.Name}");
+                sqlFile.WriteLine($"USE [{database.Name}]");
                 sqlFile.WriteLine("GO");
                 sqlFile.WriteLine();
 
@@ -874,7 +874,6 @@ ON ss.name = infS.SEQUENCE_NAME";
 
         private void WriteFunctions(IEnumerable<DBFunction> functions, StreamWriter sqlFile)
         {
-            sqlFile.WriteLine("/* Functions */");
             foreach (var function in functions)
             {
                 sqlFile.WriteLine(function.GetCreationQuery());
@@ -884,8 +883,6 @@ ON ss.name = infS.SEQUENCE_NAME";
 
         private void WriteProcedures(IEnumerable<DBProcedure> procedures, StreamWriter sqlFile)
         {
-            sqlFile.WriteLine("/* Stored procedures */");
-
             foreach (var procedure in procedures)
             {
                 sqlFile.WriteLine(procedure.GetCreationQuery());
@@ -913,7 +910,6 @@ ON ss.name = infS.SEQUENCE_NAME";
 
         private void WriteSynonyms(IEnumerable<DBSynonym> synonyms, StreamWriter sqlFile)
         {
-            sqlFile.WriteLine("/* Synonyms */");
             foreach (var synonym in synonyms)
             {
                 sqlFile.WriteLine(synonym.GetCreationQuery());
@@ -923,8 +919,6 @@ ON ss.name = infS.SEQUENCE_NAME";
 
         private void WriteTableData(IEnumerable<DBTable> tables, StreamWriter sqlFile)
         {
-            sqlFile.WriteLine("/* Data */");
-
             foreach (var table in tables)
             {
                 foreach (var dataPiece in table.Data)
@@ -937,8 +931,6 @@ ON ss.name = infS.SEQUENCE_NAME";
 
         private void WriteTablesCreation(IEnumerable<DBTable> tables, StreamWriter sqlFile)
         {
-            sqlFile.WriteLine("/* Tables */");
-
             foreach (var table in tables)
             {
                 sqlFile.WriteLine(table.GetCreationQuery());

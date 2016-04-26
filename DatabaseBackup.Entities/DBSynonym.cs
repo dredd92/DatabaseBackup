@@ -3,8 +3,11 @@
     public class DBSynonym
     {
         public string Catalogue { get; set; }
+
         public string Name { get; set; }
+
         public string ObjectName { get; set; }
+
         public string Schema { get; set; }
 
         public string GetCreationQuery()

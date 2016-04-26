@@ -30,15 +30,15 @@ namespace DatabaseBackup.Entities
                         if (column.CharactersMaxLength == -1)
                         {
                             result.AppendLine($"\t[{column.Name}] {column.DataType}(MAX) {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
-                            continue;
+                            break;
                         }
                         else
                         {
-                            result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
+                            result.AppendLine($"\t[{column.Name}] {column.DataType}({column.CharactersMaxLength}){(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
                             break;
                         }
                     default:
-                        result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
+                        result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" || column.DataType == "image" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
                         break;
                 }
 
