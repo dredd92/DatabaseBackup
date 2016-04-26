@@ -13,8 +13,6 @@ namespace DatabaseBackup.DAL
 {
     public class DBDao : IDao
     {
-        private string rootDir = Path.Combine(Path.GetTempPath(), "DatabaseBackups");
-
         public void Backup(string conString, string pathToFile)
         {
             DBDatabase database;
@@ -45,6 +43,7 @@ namespace DatabaseBackup.DAL
                 database.Functions = this.GetFunctions(connection);
 
                 database.Sequences = this.GetSequences(connection);
+                connection.Close();
             }
 
             this.CreateBackupFile(database, pathToFile);
@@ -72,6 +71,8 @@ namespace DatabaseBackup.DAL
 
                     comString.AppendLine(line);
                 }
+
+                connection.Close();
             }
         }
 
@@ -88,16 +89,14 @@ namespace DatabaseBackup.DAL
                         yield return reader.GetString(0);
                     }
                 }
+
+                connection.Close();
             }
         }
 
         private void CreateBackupFile(DBDatabase database, string pathToFile)
         {
             var curDate = DateTime.Now;
-            if (!Directory.Exists(this.rootDir))
-            {
-                Directory.CreateDirectory(this.rootDir);
-            }
             using (var sqlFile = new StreamWriter(pathToFile))
             {
                 sqlFile.WriteLine(database.GetCreationQuery());
@@ -339,36 +338,36 @@ on scc.parent_object_id = tab.object_id";
                 {
                     while (reader.Read())
                     {
-                        var Name = reader.GetString(0);
-                        var CompatibilityLevel = reader.GetByte(1);
-                        var CollationName = reader.GetString(2);
-                        var UserAccessDescription = reader.GetString(3);
-                        var IsReadOnly = reader.GetBoolean(4);
-                        var IsAutoCloseOn = reader.GetBoolean(5);
-                        var IsAutoShrinkOn = reader.GetBoolean(6);
-                        var IsReadCommittedSnapshotOn = reader.GetBoolean(7);
-                        var RecoveryModelDescription = reader.GetString(8);
-                        var PageVerifyOptionDescription = reader.GetString(9);
-                        var IsAutoCreateStatsOn = reader.GetBoolean(10);
-                        var IsAutoUpdateStatsOn = reader.GetBoolean(11);
-                        var IsAnsiNullDefaultOn = reader.GetBoolean(12);
-                        var IsAnsiNullsOn = reader.GetBoolean(13);
-                        var IsAnsiPaddingOn = reader.GetBoolean(14);
-                        var IsAnsiWarningsOn = reader.GetBoolean(15);
-                        var IsArithabortOn = reader.GetBoolean(16);
-                        var IsConcatNullYieldsNullOn = reader.GetBoolean(17);
-                        var IsQuotedIdentifierOn = reader.GetBoolean(18);
-                        var IsNumericRoundAbortOn = reader.GetBoolean(19);
-                        var IsRecursiveTriggersOn = reader.GetBoolean(20);
-                        var IsCursorCloseOnCommitOn = reader.GetBoolean(21);
-                        var IsDateCorrelationOn = reader.GetBoolean(22);
-                        var IsDbChainingOn = reader.GetBoolean(23);
-                        var IsTrustworthyOn = reader.GetBoolean(24);
-                        var IsParameterizationForced = reader.GetBoolean(25);
-                        var IsBrokerEnabled = reader.GetBoolean(26);
+                        //var Name = reader.GetString(0);
+                        //var CompatibilityLevel = reader.GetByte(1);
+                        //var CollationName = reader.GetString(2);
+                        //var UserAccessDescription = reader.GetString(3);
+                        //var IsReadOnly = reader.GetBoolean(4);
+                        //var IsAutoCloseOn = reader.GetBoolean(5);
+                        //var IsAutoShrinkOn = reader.GetBoolean(6);
+                        //var IsReadCommittedSnapshotOn = reader.GetBoolean(7);
+                        //var RecoveryModelDescription = reader.GetString(8);
+                        //var PageVerifyOptionDescription = reader.GetString(9);
+                        //var IsAutoCreateStatsOn = reader.GetBoolean(10);
+                        //var IsAutoUpdateStatsOn = reader.GetBoolean(11);
+                        //var IsAnsiNullDefaultOn = reader.GetBoolean(12);
+                        //var IsAnsiNullsOn = reader.GetBoolean(13);
+                        //var IsAnsiPaddingOn = reader.GetBoolean(14);
+                        //var IsAnsiWarningsOn = reader.GetBoolean(15);
+                        //var IsArithabortOn = reader.GetBoolean(16);
+                        //var IsConcatNullYieldsNullOn = reader.GetBoolean(17);
+                        //var IsQuotedIdentifierOn = reader.GetBoolean(18);
+                        //var IsNumericRoundAbortOn = reader.GetBoolean(19);
+                        //var IsRecursiveTriggersOn = reader.GetBoolean(20);
+                        //var IsCursorCloseOnCommitOn = reader.GetBoolean(21);
+                        //var IsDateCorrelationOn = reader.GetBoolean(22);
+                        //var IsDbChainingOn = reader.GetBoolean(23);
+                        //var IsTrustworthyOn = reader.GetBoolean(24);
+                        //var IsParameterizationForced = reader.GetBoolean(25);
+                        //var IsBrokerEnabled = reader.GetBoolean(26);
                         return new DBDatabase
                         {
-                            Name = reader.GetString(0),
+                            Name = $"{reader.GetString(0)}_{DateTime.Now}",
                             CompatibilityLevel = reader.GetByte(1),
                             CollationName = reader.GetString(2),
                             UserAccessDescription = reader.GetString(3),

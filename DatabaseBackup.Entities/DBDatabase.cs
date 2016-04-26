@@ -85,8 +85,8 @@ namespace DatabaseBackup.Entities
             result.AppendLine("GO");
             result.AppendLine();
 
-            result.AppendLine($"IF DB_ID (N'{this.Name}') IS NOT NULL DROP DATABASE [{this.Name}]");
-            result.AppendLine("GO");
+            //result.AppendLine($"IF DB_ID (N'{this.Name}') IS NOT NULL DROP DATABASE [{this.Name}]");
+            //result.AppendLine("GO");
 
             result.AppendLine($"CREATE DATABASE [{this.Name}]");
             result.AppendLine($"COLLATE {this.CollationName}");

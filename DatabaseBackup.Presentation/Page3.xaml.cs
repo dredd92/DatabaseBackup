@@ -77,9 +77,9 @@ namespace DatabaseBackup.Presentation
 
         private void AddDescriptionToServerInput(object sender, RoutedEventArgs e)
         {
-            if (serverAddressTextBox.Text == "")
+            if (this.serverAddressTextBox.Text == "")
             {
-                serverAddressTextBox.Text = "Type the path to server...";
+                this.serverAddressTextBox.Text = "Type the path to server...";
             }
         }
 

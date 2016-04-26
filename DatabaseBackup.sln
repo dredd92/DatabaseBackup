@@ -31,8 +31,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{D766FCDB-B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingDatabaseBackup", "TestingDatabaseBackup\TestingDatabaseBackup.csproj", "{B9D7339F-2F95-4BFF-A896-CA8845FCDBAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestedDatabase", "TestedDatabase\TestedDatabase.csproj", "{DFAE709B-33DC-47E1-A516-2DB44F34E6D5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,10 +69,6 @@ Global
 		{B9D7339F-2F95-4BFF-A896-CA8845FCDBAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9D7339F-2F95-4BFF-A896-CA8845FCDBAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9D7339F-2F95-4BFF-A896-CA8845FCDBAC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFAE709B-33DC-47E1-A516-2DB44F34E6D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFAE709B-33DC-47E1-A516-2DB44F34E6D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFAE709B-33DC-47E1-A516-2DB44F34E6D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFAE709B-33DC-47E1-A516-2DB44F34E6D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +83,5 @@ Global
 		{4B931ED5-C7FE-4B0F-BB5B-2C27354570C4} = {AA5D56C8-6604-45A4-9C32-90EDDB3F230E}
 		{DF49819B-EFCF-4005-99E6-1CA1B42A0F16} = {CCD4C156-9E10-4E37-A67B-28D411A735D8}
 		{B9D7339F-2F95-4BFF-A896-CA8845FCDBAC} = {D766FCDB-BFEA-4FA2-9329-F4675BA49DF0}
-		{DFAE709B-33DC-47E1-A516-2DB44F34E6D5} = {D766FCDB-BFEA-4FA2-9329-F4675BA49DF0}
 	EndGlobalSection
 EndGlobal
