@@ -61,24 +61,21 @@ namespace DatabaseBackup.Presentation
             {
                 case AuthenticationMode.WindowsAuthentication:
                     LogicKeeper.Logic.RestoreLocalInstance(this.selectDBTextBox.Text, this.serverAddressTextBox.Text);
-                    MessageBox.Show("Backup completed.");
+                    MessageBox.Show("Restoration completed.");
                     break;
 
                 case AuthenticationMode.SqlAuthentication:
                     this.address = this.serverAddressTextBox.Text;
                     this.username = this.usernameTextBox.Text;
                     this.password = this.passwordTextBox.Text;
-                    //LogicKeeper.Logic.Backup(dialog.FileName, this.address, database, this.username, this.password);
-                    MessageBox.Show("Backup completed.");
+                    LogicKeeper.Logic.Restore(this.selectDBTextBox.Text, this.address, this.username, this.password);
+                    MessageBox.Show("Restoration completed.");
                     break;
 
                 default:
                     MessageBox.Show("Error");
                     break;
             }
-
-            LogicKeeper.Logic.RestoreLocalInstance(this.selectDBTextBox.Text, this.serverAddressTextBox.Text);
-            MessageBox.Show("Restoration completed");
         }
 
         private void AddDescriptionToServerInput(object sender, RoutedEventArgs e)

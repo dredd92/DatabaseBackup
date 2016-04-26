@@ -19,7 +19,28 @@ namespace DatabaseBackup.Entities
 
             foreach (var column in this.Columns)
             {
-                result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
+                switch (column.DataType)
+                {
+                    case "nvarchar":
+                    case "varchar":
+                    case "varbinary":
+                        if (column.CharactersMaxLength == -1)
+                        {
+                            result.AppendLine($"\t[{column.Name}] {column.DataType}(MAX) {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
+                            continue;
+                        }
+                        else
+                        {
+                            result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
+                            break;
+                        }
+                    default:
+                        result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
+                        break;
+
+                }
+
+                //result.AppendLine($"\t[{column.Name}] {column.DataType}{(column.CharactersMaxLength == -1 || column.DataType == "text" || column.DataType == "ntext" ? string.Empty : $"({column.CharactersMaxLength})")} {(column.IsNullable ? "NULL" : "NOT NULL")} {(column.Default == null ? string.Empty : "DEFAULT" + column.Default)},");
             }
 
             result.AppendLine(")");

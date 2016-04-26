@@ -5,6 +5,7 @@ using Microsoft.SqlServer.Management.Smo;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,32 +63,14 @@ namespace DatabaseBackup.DAL
                 {
                     if (Regex.IsMatch(line, @".*GO.*"))
                     {
-                        try
-                        {
+
                             using (var command = new SqlCommand(comString.ToString(), connection))
                             {
                                 command.ExecuteNonQuery();
-                                Console.WriteLine(comString);
                             }
 
                             comString.Clear();
                             continue;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(comString);
-                            Console.WriteLine(e.Message);
-                            if (Console.ReadLine().ToLower() == "g")
-                            {
-                                comString.Clear();
-                                continue;
-                            }
-                            else
-                            {
-                                connection.Close();
-                                return;
-                            }
-                        }
                     }
 
                     comString.AppendLine(line);
@@ -201,13 +184,15 @@ on scc.parent_object_id = tab.object_id";
                 {
                     while (reader.Read())
                     {
+                        var dataType = reader.GetString(3);
+
                         columns.Add(new DBColumn
                         {
                             Name = reader.GetString(0),
                             Default = (reader.IsDBNull(1)) ? null : reader.GetString(1),
                             IsNullable = reader.GetString(2) == "YES" ? true : false,
-                            DataType = reader.GetString(3),
-                            CharactersMaxLength = (reader.IsDBNull(4) || reader.GetString(3) == "hierarchyid") ? -1 : reader.GetInt32(4),
+                            DataType = dataType,
+                            CharactersMaxLength = (reader.IsDBNull(4) || dataType == "hierarchyid") ? -1 : reader.GetInt32(4),
                             CollationName = (reader.IsDBNull(5)) ? null : reader.GetString(5),
                         });
                     }
@@ -252,16 +237,21 @@ on scc.parent_object_id = tab.object_id";
 
                                 case "bigint":
                                 case "bit":
-                                case "decimal":
+
                                 case "float":
                                 case "int":
-                                case "money":
-                                case "numeric":
                                 case "real":
                                 case "smallint":
                                 case "smallmoney":
                                 case "tinyint":
                                     tempData.NameValue.Add(column.Name, reader[counter].ToString());
+                                    break;
+
+                                case "decimal":
+                                case "money":
+                                case "numeric":
+                                    var result = (reader[counter] as decimal?)?.ToString(CultureInfo.InvariantCulture);
+                                    tempData.NameValue.Add(column.Name, result);
                                     break;
 
                                 case "nchar":
