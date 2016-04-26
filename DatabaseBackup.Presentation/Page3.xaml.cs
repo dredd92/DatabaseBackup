@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -55,26 +56,33 @@ namespace DatabaseBackup.Presentation
             else if (!Regex.IsMatch(this.selectDBTextBox.Text, @".*\.sql"))
             {
                 MessageBox.Show("Selected file has wrong type. Please, select another file");
-            }            
+            }
 
-            switch (this.authMode)
+            try
             {
-                case AuthenticationMode.WindowsAuthentication:
-                    LogicKeeper.Logic.RestoreLocalInstance(this.selectDBTextBox.Text, this.serverAddressTextBox.Text);
-                    MessageBox.Show("Restoration completed.");
-                    break;
+                switch (this.authMode)
+                {
+                    case AuthenticationMode.WindowsAuthentication:
+                        LogicKeeper.Logic.RestoreLocalInstance(this.selectDBTextBox.Text, this.serverAddressTextBox.Text);
+                        MessageBox.Show("Restoration completed.");
+                        break;
 
-                case AuthenticationMode.SqlAuthentication:
-                    this.address = this.serverAddressTextBox.Text;
-                    this.username = this.usernameTextBox.Text;
-                    this.password = this.passwordTextBox.Text;
-                    LogicKeeper.Logic.Restore(this.selectDBTextBox.Text, this.address, this.username, this.password);
-                    MessageBox.Show("Restoration completed.");
-                    break;
+                    case AuthenticationMode.SqlAuthentication:
+                        this.address = this.serverAddressTextBox.Text;
+                        this.username = this.usernameTextBox.Text;
+                        this.password = this.passwordTextBox.Text;
+                        LogicKeeper.Logic.Restore(this.selectDBTextBox.Text, this.address, this.username, this.password);
+                        MessageBox.Show("Restoration completed.");
+                        break;
 
-                default:
-                    MessageBox.Show("Error");
-                    break;
+                    default:
+                        MessageBox.Show("Error. Something unexpected happened.", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"An error occured during database backup.{Environment.NewLine}{ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -90,23 +98,25 @@ namespace DatabaseBackup.Presentation
         {
             if (selectAutentification.SelectedItem == selectAutentification.Items[0])
             {
-                usernameTextBox.IsEnabled = false;
-                passwordTextBox.IsEnabled = false;
-                usernameLabel.IsEnabled = false;
-                passwordLabel.IsEnabled = false;
+                this.authMode = AuthenticationMode.WindowsAuthentication;
+                this.usernameTextBox.IsEnabled = false;
+                this.passwordTextBox.IsEnabled = false;
+                this.usernameLabel.IsEnabled = false;
+                this.passwordLabel.IsEnabled = false;
 
-                usernameTextBox.Text = "(not required)";
-                passwordTextBox.Text = "(not required)";
+                this.usernameTextBox.Text = "(not required)";
+                this.passwordTextBox.Text = "(not required)";
             }
             else
             {
-                usernameTextBox.IsEnabled = true;
-                passwordTextBox.IsEnabled = true;
-                usernameLabel.IsEnabled = true;
-                passwordLabel.IsEnabled = true;
+                this.authMode = AuthenticationMode.SqlAuthentication;
+                this.usernameTextBox.IsEnabled = true;
+                this.passwordTextBox.IsEnabled = true;
+                this.usernameLabel.IsEnabled = true;
+                this.passwordLabel.IsEnabled = true;
 
-                usernameTextBox.Text = "";
-                passwordTextBox.Text = "";
+                this.usernameTextBox.Text = "";
+                this.passwordTextBox.Text = "";
             }
         }
 

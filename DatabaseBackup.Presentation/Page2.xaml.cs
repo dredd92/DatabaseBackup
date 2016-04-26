@@ -1,19 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DatabaseBackup.Presentation
 {
@@ -68,22 +57,29 @@ namespace DatabaseBackup.Presentation
             {
                 return;
             }
-
-            switch (this.authMode)
+            try
             {
-                case AuthenticationMode.WindowsAuthentication:
-                    LogicKeeper.Logic.BackupLocalInstance(dialog.FileName, this.address, database);
-                    MessageBox.Show("Backup completed.");
-                    break;
+                switch (this.authMode)
+                {
 
-                case AuthenticationMode.SqlAuthentication:
-                    LogicKeeper.Logic.Backup(dialog.FileName, this.address, database, this.username, this.password);
-                    MessageBox.Show("Backup completed.");
-                    break;
+                    case AuthenticationMode.WindowsAuthentication:
+                        LogicKeeper.Logic.BackupLocalInstance(dialog.FileName, this.address, database);
+                        MessageBox.Show("Backup completed.");
+                        break;
 
-                default:
-                    MessageBox.Show("Error");
-                    break;
+                    case AuthenticationMode.SqlAuthentication:
+                        LogicKeeper.Logic.Backup(dialog.FileName, this.address, database, this.username, this.password);
+                        MessageBox.Show("Backup completed.");
+                        break;
+
+                    default:
+                        MessageBox.Show("Error. Something unexpected happened.", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"An error occured during database backup.{Environment.NewLine}{ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -98,9 +94,9 @@ namespace DatabaseBackup.Presentation
                     this.authMode = AuthenticationMode.WindowsAuthentication;
                     this.choosingDatabase.ItemsSource = LogicKeeper.Logic.ShowDatabasesLocalInstance(this.address);
                 }
-                catch (SqlException)
+                catch (SqlException ex)
                 {
-                    MessageBox.Show("Error");
+                    MessageBox.Show($"An error occured during database backup.{Environment.NewLine}{ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
@@ -111,10 +107,10 @@ namespace DatabaseBackup.Presentation
                     this.username = this.usernameTextBox.Text;
                     this.password = this.passwordTextBox.Text;
                     this.choosingDatabase.ItemsSource = LogicKeeper.Logic.ShowDatabases(this.address, this.username, this.password);
-                }
-                catch (SqlException)
+                } 
+                catch (SqlException ex)
                 {
-                    MessageBox.Show("Error:");
+                    MessageBox.Show($"An error occured during database backup.{Environment.NewLine}{ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -123,31 +119,31 @@ namespace DatabaseBackup.Presentation
         {
             if (selectAutentification.SelectedItem == selectAutentification.Items[0])
             {
-                usernameTextBox.IsEnabled = false;
-                passwordTextBox.IsEnabled = false;
-                usernameLabel.IsEnabled = false;
-                passwordLabel.IsEnabled = false;
+                this.usernameTextBox.IsEnabled = false;
+                this.passwordTextBox.IsEnabled = false;
+                this.usernameLabel.IsEnabled = false;
+                this.passwordLabel.IsEnabled = false;
 
-                usernameTextBox.Text = "(not required)";
-                passwordTextBox.Text = "(not required)";
+                this.usernameTextBox.Text = "(not required)";
+                this.passwordTextBox.Text = "(not required)";
             }
             else
             {
-                usernameTextBox.IsEnabled = true;
-                passwordTextBox.IsEnabled = true;
-                usernameLabel.IsEnabled = true;
-                passwordLabel.IsEnabled = true;
+                this.usernameTextBox.IsEnabled = true;
+                this.passwordTextBox.IsEnabled = true;
+                this.usernameLabel.IsEnabled = true;
+                this.passwordLabel.IsEnabled = true;
 
-                usernameTextBox.Text = "";
-                passwordTextBox.Text = "";
+                this.usernameTextBox.Text = "";
+                this.passwordTextBox.Text = "";
             }
         }
 
         private void RemoveText(object sender, RoutedEventArgs e)
         {
-            if (InputServerData.Text == "Type the path to server...")
+            if (this.InputServerData.Text == "Type the path to server...")
             {
-                InputServerData.Text = "";
+                this.InputServerData.Text = "";
             }
         }
     }
